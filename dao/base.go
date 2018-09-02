@@ -28,7 +28,7 @@ var (
 	DB sql.DB // DB 导出
 )
 
-var dbPool map[string]*sql.DB = map[string]*sql.DB{}
+var dbPool = map[string]*sql.DB{}
 
 func init() {
 	initDB()

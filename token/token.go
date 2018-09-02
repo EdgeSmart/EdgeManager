@@ -26,7 +26,7 @@ type Config struct {
 type instance struct {
 }
 
-var tokenPool map[string]tokenInterface = map[string]tokenInterface{}
+var tokenPool = map[string]tokenInterface{}
 
 func GetInstance(flag string) (tokenInterface, error) {
 	if ins, exists := tokenPool[flag]; exists {
