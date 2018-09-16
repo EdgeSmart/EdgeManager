@@ -71,7 +71,7 @@ func Login(ctx *gin.Context) {
 func loginTest(data loginInfo) (string, error) {
 	db, _ := dao.GetDB("edge")
 
-	stmt, _ := db.Prepare("SELECT `uid`,`token`,`ext` FROM `user_auth` WHERE `identity` = ? AND `type` = ? AND `status` = ?")
+	stmt, _ := db.Prepare("SELECT * FROM `user_auth` WHERE `identity` = ? AND `type` = ? AND `status` = ?")
 	defer stmt.Close()
 
 	rows := stmt.QueryRow(data.Username, data.Type, 0)
