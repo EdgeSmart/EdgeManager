@@ -5,7 +5,6 @@ import (
 	"os"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
-	"github.com/gin-gonic/gin"
 )
 
 type topicItem struct {
@@ -72,9 +71,4 @@ func appHandler(client MQTT.Client, msg MQTT.Message) {
 func gatewayRegisterHandler(client MQTT.Client, msg MQTT.Message) {
 	fmt.Printf("TOPIC: %s\n", msg.Topic())
 	fmt.Printf("MSG: %s\n", msg.Payload())
-}
-
-func Proxy(ctx *gin.Context) string {
-
-	return ""
 }

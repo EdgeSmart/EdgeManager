@@ -6,7 +6,9 @@ import (
 	"os"
 
 	_ "github.com/EdgeSmart/EdgeManager/dao"
+	"github.com/EdgeSmart/EdgeManager/middleware"
 	"github.com/EdgeSmart/EdgeManager/mqserver"
+	"github.com/EdgeSmart/EdgeManager/service/cluster"
 	"github.com/EdgeSmart/EdgeManager/service/user"
 	"github.com/EdgeSmart/EdgeManager/token"
 	"github.com/gin-gonic/gin"
@@ -22,6 +24,7 @@ func main() {
 	go mqserver.Run()
 	go httpServer()
 	go proxyServer()
+	go httpServerTest()
 
 	quitSignal := <-signal
 	fmt.Println("Quit", quitSignal)
@@ -51,8 +54,19 @@ func httpServer() {
 	tokenConf := token.Config{}
 	token.NewInstance("edge", "memery", tokenConf)
 	// app.Use(middleware.LoginControl)
-	app.Any("/test", user.Test)
 	userGroup := app.Group("/user")
 	userGroup.POST("/login", user.Login)
+	userGroup.POST("/info", user.Info)
+
+	// cluster
+	clusterGroup := app.Group("/cluster")
+	clusterGroup.POST("/list", cluster.List)
+
 	app.Run()
+}
+
+func httpServerTest() {
+	app := gin.Default()
+	app.Use(middleware.DockerAPI)
+	app.Run("0.0.0.0:8082")
 }
