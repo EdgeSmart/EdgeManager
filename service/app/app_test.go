@@ -13,7 +13,7 @@ func TestDelete(t *testing.T) {
 }
 
 func TestInfo(t *testing.T) {
-
+	t.Error("Test get app info failed.")
 }
 
 func TestList(t *testing.T) {
