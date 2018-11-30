@@ -58,6 +58,7 @@ func initDB() {
 		_, err = connect(confData)
 		if err != nil {
 			// todo: print log
+			panic("DB connect failed.")
 		}
 	}
 }

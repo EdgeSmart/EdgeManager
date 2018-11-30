@@ -11,13 +11,13 @@ import (
 )
 
 type loginInfo struct {
-	Type     string
-	Username string
-	Password string
+	Type     string `json:"type"`
+	Identity string `json:"identity"`
+	Token    string `json:"token"`
 }
 
 type response struct {
-	Code    int         `json:"code"`
+	Status  int         `json:"status"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 	MS      int64       `json:"ms"`
@@ -29,7 +29,7 @@ type loginResponse struct {
 
 // Login User login
 func Login(ctx *gin.Context) {
-	var data loginInfo
+	data := loginInfo{}
 	err := ctx.BindJSON(&data)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, map[string]string{"test": "test"})
@@ -49,7 +49,7 @@ func Login(ctx *gin.Context) {
 			// todo: error
 			return
 		}
-		tokenStr = tokenObj.Generate(data.Username)
+		tokenStr = tokenObj.Generate(data.Identity)
 		err = tokenObj.Set(uid, tokenStr, uid)
 		if err != nil {
 			// todo: error
@@ -58,7 +58,7 @@ func Login(ctx *gin.Context) {
 		}
 	}
 	responseData := response{
-		Code:    0,
+		Status:  0,
 		Message: "",
 		Data: loginResponse{
 			Token: tokenStr,
@@ -70,21 +70,16 @@ func Login(ctx *gin.Context) {
 
 func loginTest(data loginInfo) (string, error) {
 	db, _ := dao.GetDB("edge")
+	row := db.QueryRow("SELECT `uid`,`token`,`ext` FROM `user_auth` WHERE `identity` = ? AND `type` = ? AND `status` = 0", data.Identity, data.Type)
 
-	stmt, _ := db.Prepare("SELECT `uid`,`token`,`ext` FROM `user_auth` WHERE `identity` = ? AND `type` = ? AND `status` = ?")
-	defer stmt.Close()
-
-	rows := stmt.QueryRow(data.Username, data.Type, 0)
-
-	var uid string
-	var token string
+	uid := ""
+	token := ""
 	var ext string
-
-	err := rows.Scan(&uid, &token, &ext)
+	err := row.Scan(&uid, &token, &ext)
 	if err != nil {
 		return "", errors.New("failed")
 	}
-	if token == data.Password {
+	if token == data.Token {
 		return uid, nil
 	}
 	return "", errors.New("failed")
