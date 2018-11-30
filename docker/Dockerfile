@@ -1,6 +1,6 @@
 FROM debian:buster-slim
-ADD EdgeManager /
-ADD conf /
+COPY EdgeManager /
+COPY conf/ /conf/
 ENTRYPOINT ["/EdgeManager"]
 EXPOSE 8080
 EXPOSE 8081
