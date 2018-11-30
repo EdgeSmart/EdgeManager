@@ -29,13 +29,6 @@ before_deploy:
   - env
 
 deploy:
-  - provider: releases
-    api_key: "$GITHUB_API_KEY"
-    file:
-      - $LINUX_AMD64_FILE_NAME
-    skip_cleanup: true
-    on:
-      tags: true
   - deploy:
     provider: script
     script: bash docker/deploy.sh
