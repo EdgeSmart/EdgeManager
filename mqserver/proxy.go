@@ -3,8 +3,8 @@ package mqserver
 import (
 	"bytes"
 	"encoding/gob"
-	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -103,22 +103,10 @@ func HandleClient(conn net.Conn) {
 
 func readData(conn net.Conn) ([]byte, error) {
 	requestData := []byte{}
-	for {
-		// 可能的bug，如果正好第最后一次遍历取出所有数据，可能出现hang住
-		reqBuf := make([]byte, 4096)
-		bufLen := len(reqBuf)
-		readLen, err := conn.Read(reqBuf[:])
-		if err != nil {
-			fmt.Println(err)
-			return []byte{}, errors.New("Read data failed")
-		}
-		requestData = append(requestData, reqBuf[0:readLen]...)
-		if readLen < bufLen {
-			break
-		}
-	}
-
-	return requestData, nil
+	requestData, err := ioutil.ReadAll(conn)
+	fmt.Println(requestData)
+	fmt.Println(string(requestData))
+	return requestData, err
 }
 
 func checkError(err error) {

@@ -17,7 +17,6 @@ import (
 /*
 Restful API
 */
-
 func main() {
 	signal := make(chan os.Signal)
 
@@ -32,7 +31,7 @@ func main() {
 
 func proxyServer() {
 	service := ":8081"
-	tcpAddr, err := net.ResolveTCPAddr("tcp4", service)
+	tcpAddr, err := net.ResolveTCPAddr("tcp", service)
 	if err != nil {
 		fmt.Println(err)
 	}
