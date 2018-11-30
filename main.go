@@ -6,7 +6,6 @@ import (
 	"os"
 
 	_ "github.com/EdgeSmart/EdgeManager/dao"
-	"github.com/EdgeSmart/EdgeManager/middleware"
 	"github.com/EdgeSmart/EdgeManager/mqserver"
 	"github.com/EdgeSmart/EdgeManager/service/cluster"
 	"github.com/EdgeSmart/EdgeManager/service/user"
@@ -23,7 +22,6 @@ func main() {
 	go mqserver.Run()
 	go httpServer()
 	go proxyServer()
-	go httpServerTest()
 
 	quitSignal := <-signal
 	fmt.Println("Quit", quitSignal)
@@ -62,10 +60,4 @@ func httpServer() {
 	clusterGroup.POST("/list", cluster.List)
 
 	app.Run()
-}
-
-func httpServerTest() {
-	app := gin.Default()
-	app.Use(middleware.DockerAPI)
-	app.Run("0.0.0.0:8082")
 }
