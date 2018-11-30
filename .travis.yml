@@ -20,7 +20,7 @@ install:
   - go get -t -v ./...
 
 before_script:
-  - go test
+  - go test ./...
 
 script:
   - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o $LINUX_AMD64_FILE_NAME
