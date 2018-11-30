@@ -1,4 +1,4 @@
-FROM scratch
+FROM debian:buster-slim
 ADD EdgeManager /
 ADD conf /
 ENTRYPOINT ["/EdgeManager"]
