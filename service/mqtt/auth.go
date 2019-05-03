@@ -12,12 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mqserver
+package mqtt
 
 import (
-	"fmt"
-
-	"github.com/EdgeSmart/EdgeManager/service/cluster"
 	"github.com/surgemq/surgemq/auth"
 )
 
@@ -31,10 +28,10 @@ var (
 )
 
 func init() {
-	fmt.Println("init")
 	auth.Register("edge_auth", edgeAuth)
 }
 
 func (this edgeAuthenticator) Authenticate(id string, cred interface{}) error {
-	return cluster.Auth(id, cred)
+	// return cluster.Auth(id, cred)
+	return nil
 }

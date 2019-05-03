@@ -1,4 +1,4 @@
-package mqserver
+package mqtt
 
 import (
 	"fmt"
@@ -33,7 +33,7 @@ var (
 
 func startService() {
 	clientID = fmt.Sprintf("manager/%s", "main")
-	opts := MQTT.NewClientOptions().AddBroker("tcp://127.0.0.1:1883")
+	opts := MQTT.NewClientOptions().AddBroker(":1883")
 	opts.SetClientID(clientID)
 	opts.SetUsername(clientID)
 	opts.SetPassword("no_need")

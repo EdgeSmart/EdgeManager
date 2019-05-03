@@ -2,15 +2,10 @@ package main
 
 import (
 	"fmt"
-	"net"
 	"os"
 
-	_ "github.com/EdgeSmart/EdgeManager/dao"
-	"github.com/EdgeSmart/EdgeManager/mqserver"
-	"github.com/EdgeSmart/EdgeManager/service/cluster"
-	"github.com/EdgeSmart/EdgeManager/service/user"
-	"github.com/EdgeSmart/EdgeManager/token"
-	"github.com/gin-gonic/gin"
+	"github.com/EdgeSmart/EdgeManager/service/mqtt"
+	"github.com/EdgeSmart/EdgeManager/service/proxy"
 )
 
 /*
@@ -19,45 +14,14 @@ Restful API
 func main() {
 	signal := make(chan os.Signal)
 
-	go mqserver.Run()
-	go httpServer()
-	go proxyServer()
+	// Start MQTT server
+	go mqtt.Run()
+
+	// Start proxy server
+	// go proxy.Run()
+
+	go proxy.RunNew()
 
 	quitSignal := <-signal
-	fmt.Println("Quit", quitSignal)
-}
-
-func proxyServer() {
-	service := ":8081"
-	tcpAddr, err := net.ResolveTCPAddr("tcp", service)
-	if err != nil {
-		fmt.Println(err)
-	}
-	listener, err := net.ListenTCP("tcp", tcpAddr)
-	if err != nil {
-		fmt.Println(err)
-	}
-	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			continue
-		}
-		go mqserver.HandleClient(conn)
-	}
-}
-
-func httpServer() {
-	app := gin.Default()
-	tokenConf := token.Config{}
-	token.NewInstance("edge", "memery", tokenConf)
-	// app.Use(middleware.LoginControl)
-	userGroup := app.Group("/user")
-	userGroup.POST("/login", user.Login)
-	userGroup.POST("/info", user.Info)
-
-	// cluster
-	clusterGroup := app.Group("/cluster")
-	clusterGroup.POST("/list", cluster.List)
-
-	app.Run()
+	fmt.Println("Process quit: ", quitSignal)
 }

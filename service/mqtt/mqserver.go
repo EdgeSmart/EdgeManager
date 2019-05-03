@@ -1,4 +1,4 @@
-package mqserver
+package mqtt
 
 import (
 	"time"
@@ -14,9 +14,10 @@ var server = &service.Server{
 	TopicsProvider:   "mem",       // keeps topic subscriptions in memory
 }
 
+// Run run mqtt server
 func Run() {
 	// Listen and serve connections at localhost:1883
 	go server.ListenAndServe("tcp://:1883")
-	time.Sleep(100000)
+	time.Sleep(200000)
 	startService()
 }

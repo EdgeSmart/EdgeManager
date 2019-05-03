@@ -1,4 +1,4 @@
-package mqserver
+package mqtt
 
 import (
 	"testing"
