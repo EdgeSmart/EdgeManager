@@ -15,23 +15,60 @@
 package mqtt
 
 import (
+	"errors"
+	"strings"
+
+	"github.com/EdgeSmart/EdgeManager/dao"
 	"github.com/surgemq/surgemq/auth"
 )
 
-type edgeAuthenticator struct {
-}
-
-var _ auth.Authenticator = (*edgeAuthenticator)(nil)
+type (
+	edgeAuth struct{}
+)
 
 var (
-	edgeAuth = edgeAuthenticator{}
+	_ auth.Authenticator = (*edgeAuth)(nil)
 )
 
 func init() {
-	auth.Register("edge_auth", edgeAuth)
+	auth.Register("edge_auth", &edgeAuth{})
 }
 
-func (this edgeAuthenticator) Authenticate(id string, cred interface{}) error {
-	// return cluster.Auth(id, cred)
+// Authenticate Authenticate
+func (e *edgeAuth) Authenticate(id string, cred interface{}) error {
+	cutPos := strings.Index(id, "/")
+	if cutPos < 1 {
+		return errors.New("Unsupported type")
+	}
+	idByte := []byte(id)
+	authType := string(idByte[0:cutPos])
+	switch authType {
+	case "manager":
+		return nil
+	case "gateway":
+		return e.authGateway(string(idByte[cutPos+1:]), cred)
+	}
+	return errors.New("Unsupported type")
+}
+
+// authGateway authGateway
+func (e *edgeAuth) authGateway(id string, cred interface{}) error {
+	cutPos := strings.Index(id, "/")
+	if cutPos < 1 {
+		return errors.New("Auth params error")
+	}
+	idByte := []byte(id)
+	clusterName := string(idByte[0:cutPos])
+	machineName := string(idByte[cutPos+1:])
+	token := cred.(string)
+	if clusterName == "" || machineName == "" || token == "" {
+		return errors.New("Auth params error")
+	}
+
+	data := dao.GetClusterData(clusterName)
+	if data["token"] != token {
+		return errors.New("Auth failed")
+	}
+
 	return nil
 }
