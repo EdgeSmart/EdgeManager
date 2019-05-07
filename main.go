@@ -18,9 +18,7 @@ func main() {
 	go mqtt.Run()
 
 	// Start proxy server
-	// go proxy.Run()
-
-	go proxy.RunNew()
+	go proxy.Run()
 
 	quitSignal := <-signal
 	fmt.Println("Process quit: ", quitSignal)
